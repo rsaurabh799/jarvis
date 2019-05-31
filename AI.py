@@ -1,16 +1,19 @@
-import pyttsx3 #pip install pyttsx3
-import speech_recognition as sr #pip install speechRecognition
+import pyttsx3
+import speech_recognition as sr
 import datetime
-import wikipedia #pip install wikipedia
-import webbrowser
+import wikipedia
+import webbrowser as wb
 import os
 import smtplib
+import requests
+from pprint import pprint
+
+
 
 engine = pyttsx3.init('sapi5')
 voices = engine.getProperty('voices')
-# print(voices[1].id)
-engine.setProperty('voice', voices[0].id)
-
+#print(voices[1].id)
+engine.setProperty('voice',voices[0].id)
 
 def speak(audio):
     engine.say(audio)
@@ -18,20 +21,38 @@ def speak(audio):
 
 
 def wishMe():
+    speak("Welcome back sir")
     hour = int(datetime.datetime.now().hour)
-    if hour>=0 and hour<12:
-        speak("Good Morning!")
+    print(hour)
+    year = int(datetime.datetime.now().year)
+    month = int(datetime.datetime.now().month)
+    date = int(datetime.datetime.now().day)
+    Time = datetime.datetime.now().strftime("%I:%M:%S") 
+    print(Time)
+    print(date)
+    print(month)
+    print(year)
+    # speak("the current Time is")
+    # speak(Time)
+    # speak("the current Date is")
+    # speak(date)
+    # speak(month)
+    # speak(year)
+    if hour>=6 and hour<12:
+        speak("Good Morning Saurabh!")
 
     elif hour>=12 and hour<18:
-        speak("Good Evening!")   
+        speak("Good Afternoon Saurabh!")
+
+    elif hour>=18 and hour<24:
+        speak("Good Evening Saurabh!")
 
     else:
-        speak("Good Evening!")  
+        speak("Good Night Saurabh!")
 
-    speak("I am Jarvis Sir. Please tell me how may I help you")       
-
+    speak("Jarvis at your Service. Please tell me how can I help You ")
+#wishMe()
 def takeCommand():
-    #It takes microphone input from the user and returns string output
 
     r = sr.Recognizer()
     with sr.Microphone() as source:
@@ -40,31 +61,33 @@ def takeCommand():
         audio = r.listen(source)
 
     try:
-        print("Recognizing...")    
+        print("Recognizing...")
         query = r.recognize_google(audio, language='en-in')
-        print(f"User said: {query}\n")
+        print(f"Saurabh Said:{query}\n")
 
     except Exception as e:
-        # print(e)    
-        print("Say that again please...")  
+        print(e)
+        print("Say that again Please...")
+        speak("Say that again Please...")
         return "None"
     return query
+
 
 def sendEmail(to, content):
     server = smtplib.SMTP('smtp.gmail.com', 587)
     server.ehlo()
     server.starttls()
-    server.login('youremail@gmail.com', 'your-password')
-    server.sendmail('youremail@gmail.com', to, content)
+    server.login('rsaurabh79@gmail.com', 'sau007##')
+    server.sendmail('rsaurabh79@gmail.com', to, content)
     server.close()
+
 
 if __name__ == "__main__":
     wishMe()
     while True:
-    # if 1:
         query = takeCommand().lower()
 
-        # Logic for executing tasks based on query
+
         if 'wikipedia' in query:
             speak('Searching Wikipedia...')
             query = query.replace("wikipedia", "")
@@ -73,37 +96,62 @@ if __name__ == "__main__":
             print(results)
             speak(results)
 
-        elif 'open youtube' in query:
-            webbrowser.open("youtube.com")
+        elif 'search in chrome' in query:
+            speak("what should i search?")
+            chrome_path = 'C:/Program Files (x86)/Google/Chrome/Application/chrome.exe %s'
 
-        elif 'open google' in query:
-            webbrowser.open("google.com")
+            r = sr.Recognizer()
 
-        elif 'open stackoverflow' in query:
-            webbrowser.open("stackoverflow.com")   
+            with sr.Microphone() as source:
+                print('say something!')
+                audio = r.listen(source)
+                print("done")
+            try:
+                text = r.recognize_google(audio)
+                print('google think you said:\n' +text +'.com')
+                wb.get(chrome_path).open(text+'.com')
+            except Exception as e:
+                print(e)
 
-
-        elif 'play music' in query:
-            music_dir = 'D:\\Non Critical\\songs\\Favorite Songs2'
-            songs = os.listdir(music_dir)
-            print(songs)    
-            os.startfile(os.path.join(music_dir, songs[0]))
 
         elif 'the time' in query:
-            strTime = datetime.datetime.now().strftime("%H:%M:%S")    
+            strTime = datetime.datetime.now().strftime("%I:%M:%S")    
             speak(f"Sir, the time is {strTime}")
+        
+        elif 'the date' in query:
+            year = int(datetime.datetime.now().year)
+            month = int(datetime.datetime.now().month)
+            date = int(datetime.datetime.now().day)
+            speak("the current Date is")
+            speak(date)
+            speak(month)
+            speak(year)
 
-        # elif 'open code' in query:
-        #     codePath = "C:\\Users\\saurabh\\AppData\\Local\\Programs\\Microsoft VS Code\\Code.exe"
-        #     os.startfile(codePath)
 
-        elif 'email to saurabh' in query:
+        elif 'email to Saurabh' and 'send email' in query:
             try:
                 speak("What should I say?")
                 content = takeCommand()
-                to = "yourEmail@gmail.com"    
+                to = "rsaurabh79@gmail.com"    
                 sendEmail(to, content)
                 speak("Email has been sent!")
             except Exception as e:
                 print(e)
-                speak("Sorry my friend . I am not able to send this email")    
+                speak("Sorry my friend . I am not able to send this email")      
+
+        # elif 'open code' in query:
+        #     codePath = "C:\\Users\\user account\\AppData\\Local\\Programs\\Microsoft VS Code\\Code.exe"#ADD THE PATH OF THE PROGEM HERE
+        #     os.startfile(codePath)
+
+
+        elif 'open' in query:
+            os.system('explorer C://{}'.format(query.replace('Open','')))
+
+
+
+
+        elif 'go offline' in query:
+            speak("ok sir shutting down the system")
+            quit()
+
+        
