@@ -9,7 +9,7 @@ import requests
 from pprint import pprint
 
 
-
+master = 'Saurabh'
 engine = pyttsx3.init('sapi5')
 voices = engine.getProperty('voices')
 #print(voices[1].id)
@@ -21,7 +21,7 @@ def speak(audio):
 
 
 def wishMe():
-    speak("Welcome back sir")
+    speak("Welcome back " + master)
     hour = int(datetime.datetime.now().hour)
     print(hour)
     year = int(datetime.datetime.now().year)
@@ -39,16 +39,16 @@ def wishMe():
     # speak(month)
     # speak(year)
     if hour>=6 and hour<12:
-        speak("Good Morning Saurabh!")
+        speak("Good Morning " + master)
 
     elif hour>=12 and hour<18:
-        speak("Good Afternoon Saurabh!")
+        speak("Good Afternoon " + master)
 
     elif hour>=18 and hour<24:
-        speak("Good Evening Saurabh!")
+        speak("Good Evening " + master)
 
     else:
-        speak("Good Night Saurabh!")
+        speak("Good Night" + master)
 
     speak("Jarvis at your Service. Please tell me how can I help You ")
 #wishMe()
